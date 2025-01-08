@@ -1,0 +1,66 @@
+﻿@model IEnumerable<webDinamikAnketMVC.Models.Survey>
+
+@{
+    ViewData["Title"] = "Silinmiş Anketler";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>Bu sayfadaki anketler şu anda silinmiş durumda.</p>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table" id="deletedSurveyTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().SurveyName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().ConductedBy)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().EndDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().ExpectedParticipants)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SurveyName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ConductedBy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExpectedParticipants)
+                    </td>
+                    <td>
+                        <a asp-action="YenidenAktiflestir" asp-route-id="@item.SurveyID">Yeniden Aktifleştir</a>
+                    </td>
+                </tr>
+            
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Hiç silinmiş anket bulunmamaktadır.</p>
+}
+

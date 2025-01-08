@@ -1,0 +1,153 @@
+﻿@model webDinamikAnketMVC.Models.Survey
+
+@{
+    ViewData["Title"] = "Anket Oluştur";
+}
+
+<h2>Anket Oluştur</h2>
+
+<form asp-action="Create" method="post" class="form-group">
+    <div class="mb-3">
+        <label for="surveyName" class="form-label">Anket Başlığı</label>
+        <input asp-for="SurveyName" id="surveyName" class="form-control" />
+        <span asp-validation-for="SurveyName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="conductedBy" class="form-label">Oluşturan Kişi</label>
+        <input asp-for="ConductedBy" id="conductedBy" class="form-control" />
+        <span asp-validation-for="ConductedBy" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+        <input asp-for="StartDate" type="date" id="startDate" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="endDate" class="form-label">Bitiş Tarihi</label>
+        <input asp-for="EndDate" type="date" id="endDate" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="expectedParticipants" class="form-label">Beklenen Katılımcılar</label>
+        <input asp-for="ExpectedParticipants" type="number" id="expectedParticipants" min="1" max="10000" class="form-control" />
+        <span asp-validation-for="ExpectedParticipants" class="text-danger"></span>
+    </div>
+
+    <div id="questions-container">
+        <button type="button" class="btn btn-primary mb-3" onclick="addQuestion()">Soru Ekle</button>
+    </div>
+
+    <button type="submit" class="btn btn-success">Kaydet</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        let questionIndex = 0;
+
+        document.getElementById('startDate').addEventListener('change', validateDates);
+        document.getElementById('endDate').addEventListener('change', validateDates);
+
+        function validateDates() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+
+            const minDate = new Date('1900-01-01');
+            const maxDate = new Date('2030-12-31');
+
+            if (startDate < minDate || startDate > maxDate) {
+                alert('Başlangıç tarihi 1900 yılından önce veya 2030 yılından sonra olamaz.');
+                document.getElementById('startDate').value = '';
+            } else if (endDate < minDate || endDate > maxDate) {
+                alert('Bitiş tarihi 1900 yılından önce veya 2030 yılından sonra olamaz.');
+                document.getElementById('endDate').value = '';
+            } else if (endDate < startDate) {
+                alert('Bitiş tarihi başlangıç tarihinden önce olamaz.');
+                document.getElementById('endDate').value = '';
+            }
+        }
+
+        function addQuestion() {
+            const container = document.getElementById('questions-container');
+
+            const questionPanel = document.createElement('div');
+            questionPanel.classList.add('panel', 'mb-3');
+            questionPanel.innerHTML = `
+                <div class="panel-heading">
+                    <h4>Soru ${questionIndex + 1}</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="mb-2">
+                        <label>Soru Metni</label>
+                        <input type="text" name="Questions[${questionIndex}].QuestionText" class="form-control" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Cevap Tipi</label>
+                        <select name="Questions[${questionIndex}].AnswerType" class="form-select" onchange="toggleChoices(${questionIndex}, this.value)">
+                            <option value="Metin">Metin</option>
+                            <option value="Sayı">Sayı</option>
+                            <option value="Çoktan Tek Seçmeli">Çoktan Tek Seçmeli</option>
+                            <option value="Çoktan Çok Seçmeli">Çoktan Çok Seçmeli</option>
+                            <option value="Sayı Aralığı">Sayı Aralığı</option>
+                            <option value="Tarih">Tarih</option>
+                            <option value="Tarih Aralığı">Tarih Aralığı</option>
+                        </select>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestion(this)">Soruyu Sil</button>
+                    </div>
+                    <div id="choices-container-${questionIndex}" class="mb-3" style="display: none;">
+                        <button type="button" class="btn btn-secondary mb-2" onclick="addChoice(${questionIndex})">Şık Ekle</button>
+                    </div>
+                </div>`;
+            container.appendChild(questionPanel);
+            questionIndex++;
+        }
+
+        function toggleChoices(index, answerType) {
+            const choicesContainer = document.getElementById(`choices-container-${index}`);
+            if (answerType === "Çoktan Tek Seçmeli" || answerType === "Çoktan Çok Seçmeli") {
+                choicesContainer.style.display = "block";
+            } else {
+                choicesContainer.style.display = "none";
+                choicesContainer.innerHTML = `<button type="button" class="btn btn-secondary mb-2" onclick="addChoice(${index})">Şık Ekle</button>`;
+            }
+        }
+
+        function addChoice(questionIndex) {
+            const choicesContainer = document.getElementById(`choices-container-${questionIndex}`);
+            const choiceIndex = choicesContainer.querySelectorAll('input').length;
+            const choiceDiv = document.createElement('div');
+            choiceDiv.classList.add('mb-2');
+            choiceDiv.innerHTML = `<input type="text" name="Questions[${questionIndex}].Choices[${choiceIndex}].ChoiceText" class="form-control" placeholder="Şık">`;
+            choicesContainer.appendChild(choiceDiv);
+        }
+
+        function removeQuestion(button) {
+            const panel = button.closest('.panel');
+            panel.remove();
+        }
+    </script>
+}
+
+<style>
+    .panel {
+        border: 1px solid #ddd;
+        border-radius: .25rem;
+        padding: 1rem;
+    }
+
+    .panel-heading {
+        font-weight: bold;
+        margin-bottom: .5rem;
+    }
+
+    .panel-body {
+        margin-top: .5rem;
+    }
+</style>

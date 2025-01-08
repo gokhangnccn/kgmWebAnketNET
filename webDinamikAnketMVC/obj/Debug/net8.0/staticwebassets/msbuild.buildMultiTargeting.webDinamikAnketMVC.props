@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\webDinamikAnketMVC.props" />
+</Project>

@@ -1,0 +1,158 @@
+﻿@model Survey
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anket Detayları</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .survey-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .survey-table th, .survey-table td {
+            vertical-align: middle;
+        }
+
+        .question-section {
+            margin-top: 3rem;
+        }
+
+        .question-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .text-center-footer {
+            margin-top: 3rem;
+        }
+
+        .card-header button {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Survey Header -->
+        <div class="survey-header">
+            <h2>Anket Detayları</h2>
+        </div>
+
+        <!-- Survey General Information -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Anket Adı</h5>
+                        <p class="card-text">@Html.DisplayFor(modelItem => Model.SurveyName)</p>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Anketi Oluşturan</h5>
+                        <p class="card-text">@Html.DisplayFor(modelItem => Model.ConductedBy)</p>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Başlangıç Tarihi</h5>
+                        <p class="card-text">@Html.DisplayFor(modelItem => Model.StartDate)</p>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Bitiş Tarihi</h5>
+                        <p class="card-text">@Html.DisplayFor(modelItem => Model.EndDate)</p>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">İstenilen Katılımcı Sayısı</h5>
+                        <p class="card-text">@Html.DisplayFor(modelItem => Model.ExpectedParticipants)</p>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Aktiflik Durumu</h5>
+                        <p class="card-text">
+                            @(Model.AktifMi == 1 ? "Aktif" : "Pasif")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Survey Questions -->
+        <div class="question-section">
+            <div class="question-header">
+                <h3>Anket Soruları</h3>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="accordion" id="questionAccordion">
+                        @if (Model.Questions != null && Model.Questions.Any())
+                        {
+                            int questionNumber = 1;
+                            foreach (var question in Model.Questions)
+                            {
+                                <div class="card">
+                                    <div class="card-header" id="heading_@question.QuestionID">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_@question.QuestionID" aria-expanded="true" aria-controls="collapse_@question.QuestionID">
+                                                @("Soru " + questionNumber++ + ": " + question.QuestionText)
+                                            </button>
+                                        </h2>
+                                    </div>
+
+                                    <div id="collapse_@question.QuestionID" class="collapse" aria-labelledby="heading_@question.QuestionID" data-parent="#questionAccordion">
+                                        <div class="card-body">
+                                            @if (question.AnswerType == "Metin")
+                                            {
+                                                <div class="form-group">
+                                                    <textarea class="form-control" rows="3" disabled></textarea>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="form-group">
+                                                    @if (question.Choices != null && question.Choices.Any())
+                                                    {
+                                                        foreach (var choice in question.Choices)
+                                                        {
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" id="choice_@choice.ChoiceID" disabled>
+                                                                <label class="form-check-label" for="choice_@choice.ChoiceID">
+                                                                    @choice.ChoiceText
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">Bu ankete ait soru bulunmamaktadır.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-center text-center-footer">Anket detay sayfasındasınız.</p>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

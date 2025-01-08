@@ -1,0 +1,57 @@
+﻿@model IEnumerable<webDinamikAnketMVC.Models.Survey>
+
+@{
+    ViewData["Title"] = "Anket Listesi";
+}
+
+<h1>Anket Listesi</h1>
+
+<table class="table" id="surveyTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().SurveyName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().ConductedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().EndDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().ExpectedParticipants)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SurveyName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ConductedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ExpectedParticipants)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SurveyID">Düzenle</a> |
+                    <a asp-action="Details" asp-route-id="@item.SurveyID">Detaylar</a> |
+                    <a asp-action="Delete" asp-route-id="@item.SurveyID">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
